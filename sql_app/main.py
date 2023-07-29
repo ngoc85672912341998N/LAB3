@@ -2,11 +2,14 @@ from typing import List
 import uvicorn
 from fastapi import Depends, FastAPI, HTTPException
 from sqlalchemy.orm import Session
-
+from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from . import crud, models, schemas
 from .database import SessionLocal, engine
 
 models.Base.metadata.create_all(bind=engine)
+templates = Jinja2Templates(directory="templates")
 
 app = FastAPI()
 
@@ -18,6 +21,10 @@ def get_db():
         yield db
     finally:
         db.close()
+
+@app.get("/", response_class=HTMLResponse)
+async def index(request: Request):
+    return templates.TemplateResponse("index.html", context={"request": request})
 
 
 @app.post("/users/", response_model=schemas.User)
