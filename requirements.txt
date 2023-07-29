@@ -1,5 +1,4 @@
 sqlalchemy
 fastapi
-typing
 pydantic
 uvicorn
