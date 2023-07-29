@@ -7,11 +7,16 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from . import crud, models, schemas
 from .database import SessionLocal, engine
-
+import httpx
 models.Base.metadata.create_all(bind=engine)
 templates = Jinja2Templates(directory="templates")
 
 app = FastAPI()
+limits = httpx.Limits(max_keepalive_connections=5, max_connections=10)
+timeout = httpx.Timeout(timeout=5.0, read=15.0)
+client = httpx.AsyncClient(limits=limits, timeout=timeout)
+
+
 
 
 # Dependency
@@ -21,6 +26,11 @@ def get_db():
         yield db
     finally:
         db.close()
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    print("shutting down...")
+    await client.aclose()
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
