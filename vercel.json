@@ -1,0 +1,10 @@
+{
+	"version": 2,
+	"public": false,
+	"builds": [{ "src": "sql_app/main.py", "use": "@vercel/python" }],
+	"routes": [
+		{ "src": "/", "dest": "sql_app/main.py" },
+		{ "src": "/docs", "dest": "sql_app/main.py" },
+		{ "src": "/openapi.json", "dest": "sql_app/main.py" }
+	]
+}
