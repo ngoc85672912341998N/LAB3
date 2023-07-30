@@ -34,42 +34,60 @@ async def shutdown_event():
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
-    return templates.TemplateResponse("index.html", context={"request": request})
+    return templates.TemplateResponse("2.html", context={"request": request})
 
+###################################################################################
 
 @app.post("/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
+def create_user(user: schemas.User, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_email(db, email=user.ho_ten_nhan_su)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
     return crud.create_user(db=db, user=user)
 
+@app.post("/create_mutiple_users/", response_model=schemas.User)
+def create_user(user: schemas.User, db: Session = Depends(get_db)):
+    return crud.create_mutiple_user(db=db, user=user)
+
+@app.post("/get_update_luot_thich/")
+def get_update_luot_thich(user: schemas.UpdatePost, db: Session = Depends(get_db)):
+    print(user)
+    return crud.get_update_user11(db=db, user=user)
+
+@app.post("/get_update_time_users/")
+def get_update1_user(user: schemas.UpdateTime, db: Session = Depends(get_db)):
+    print(user)
+    return crud.get_update_time_user11(db=db, user=user)
+
+
+@app.post("/get_Delete_time_users/")
+def get_Delete_time_users(user: schemas.DeleteTime, db: Session = Depends(get_db)):
+    print(user)
+    return crud.get_delete_time_user11(db=db, user=user)
 
 @app.get("/users/", response_model=List[schemas.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
     return users
 
+##################################################################################
 
-@app.get("/users/{user_id}", response_model=schemas.User)
-def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db, user_id=user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
-
-
-@app.post("/users/{user_id}/items/", response_model=schemas.Item)
-def create_item_for_user(
-    user_id: int, item: schemas.ItemCreate, db: Session = Depends(get_db)
-):
-    return crud.create_user_item(db=db, item=item, user_id=user_id)
+@app.post("/create_update__time/", response_model=schemas.updateUser)
+def create_update__time(user: schemas.updateUser, db: Session = Depends(get_db)):
+    db_user = crud.get_update_user_by_email(db, thoi_gian=user.thoi_gian)
+    if db_user:
+        raise HTTPException(status_code=400, detail="time already registered")
+    return crud.create_update_user(db=db, user=user)
 
 
-@app.get("/items/", response_model=List[schemas.Item])
-def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    items = crud.get_items(db, skip=skip, limit=limit)
-    return items
+@app.get("/read_update_time/", response_model=List[schemas.updateUser])
+def read_update_time(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    users = crud.get_update_users(db, skip=skip, limit=limit)
+    return users
+
+
+
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
