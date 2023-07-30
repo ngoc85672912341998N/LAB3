@@ -11,6 +11,7 @@ httpx
 #    pip-compile
 #
 anyio==3.6.2
+requests
     # via
     #   httpcore
     #   starlette
