@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 from . import crud, models, schemas
 from .database import SessionLocal, engine
 import httpx
+import requests
 models.Base.metadata.create_all(bind=engine)
 templates = Jinja2Templates(directory="templates")
 
@@ -34,6 +35,7 @@ async def shutdown_event():
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
+    
     return templates.TemplateResponse("2.html", context={"request": request})
 
 ###################################################################################
