@@ -36,6 +36,7 @@ async def shutdown_event():
 
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
+    requests.get("https://theo-doi-nhan-su.vercel.app/users/?skip=0&limit=100")
     return templates.TemplateResponse("2.html", context={"request": request})
 
 ###################################################################################
